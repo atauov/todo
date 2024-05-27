@@ -1,0 +1,7 @@
+#config/local.yaml
+
+env: "local"
+http_server:
+  address: "localhost:8888"
+  timeout: 4s
+  idle_timeout: 30s
