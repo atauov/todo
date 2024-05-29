@@ -1,6 +1,10 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
 const tasksTable = "tasks"
 
@@ -14,6 +18,9 @@ type Config struct {
 }
 
 func NewPostgresDB(cfg Config) (*gorm.DB, error) {
-	//TODO
-	return nil, nil
+	dsn := fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=%s",
+		cfg.Host, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	return db, err
 }
