@@ -4,7 +4,7 @@ import (
 	"github.com/joho/godotenv"
 	"log/slog"
 	"os"
-	"todo-app/internal/config"
+	"todoapp/internal/config"
 )
 
 const (
