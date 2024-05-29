@@ -2,13 +2,13 @@ package repository
 
 import (
 	"gorm.io/gorm"
-	"todoapp"
+	"todoapp/models"
 )
 
 type Task interface {
-	CreateTask(task todoapp.TaskItem) (int, error)
-	GetTask(taskID int) (todoapp.TaskItem, error)
-	GetAllTasks() ([]todoapp.TaskItem, error)
+	CreateTask(task models.TaskItem) (int, error)
+	GetTask(taskID int) (models.TaskItem, error)
+	GetAllTasks() ([]models.TaskItem, error)
 	UpdateTask(taskID int, description string) error
 	DeleteTask(taskID int) error
 }
