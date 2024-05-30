@@ -6,8 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const tasksTable = "tasks"
-
 type Config struct {
 	Host     string
 	Port     string

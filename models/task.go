@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-type TaskItem struct {
+type Task struct {
 	gorm.Model
-	ID          int
-	Title       string `gorm:"size:255"`
-	Description string `gorm:"type:varchar(100)"`
-	CreatedAt   time.Time
-	UpdatedAT   time.Time
+	ID          int       `json:"id"`
+	Title       string    `gorm:"size:255" json:"title"`
+	Description string    `gorm:"type:varchar(255)" json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAT   time.Time `json:"updated_at"`
 }

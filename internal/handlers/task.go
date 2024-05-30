@@ -8,13 +8,13 @@ import (
 )
 
 func (h *Handler) createTask(c echo.Context) {
-	var input models.Input
+	var input models.Task
 	if err := c.Bind(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.services.CreateTask(models.TaskItem{Title: input.Title, Description: input.Description})
+	id, err := h.services.CreateTask(models.Task{Title: input.Title, Description: input.Description})
 	if err != nil {
 		slog.Error(err.Error())
 		return
