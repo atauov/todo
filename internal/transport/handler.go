@@ -1,4 +1,4 @@
-package handlers
+package transport
 
 import (
 	"github.com/labstack/echo/v4"
@@ -6,6 +6,32 @@ import (
 	"net/http"
 	"todoapp/models"
 )
+
+type Handler struct {
+	services *Service
+}
+
+func NewHandler(services *Service) *Handler {
+	return &Handler{
+		services: services,
+	}
+}
+func (h *Handler) InitRoutes() *echo.Echo {
+	router := echo.New()
+	api := router.Group("/api")
+	{
+		tasks := api.Group("/tasks")
+		{
+			tasks.POST("/", h.createTask)
+			tasks.GET("/", h.getAllTasks)
+			tasks.GET("/:id", h.getTask)
+			tasks.PUT("/:id", h.updateTask)
+			tasks.DELETE("/:id", h.deleteTask)
+		}
+	}
+
+	return router
+}
 
 func (h *Handler) createTask(c echo.Context) {
 	var input models.Task

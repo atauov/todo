@@ -1,9 +1,17 @@
-package services
+package transport
 
 import (
-	"todoapp"
 	"todoapp/internal/repository"
+	"todoapp/models"
 )
+
+type Service struct {
+	repository.Task
+}
+
+func NewService(repos *repository.Repository) *Service {
+	return &Service{Task: NewTaskService(repos.Task)}
+}
 
 type TaskService struct {
 	repo repository.Task
@@ -13,15 +21,15 @@ func NewTaskService(repo repository.Task) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (s *TaskService) CreateTask(task todoapp.TaskItem) (int, error) {
+func (s *TaskService) CreateTask(task models.Task) (int, error) {
 	return s.repo.CreateTask(task)
 }
 
-func (s *TaskService) GetTask(taskID int) (todoapp.TaskItem, error) {
+func (s *TaskService) GetTask(taskID int) (models.Task, error) {
 	return s.repo.GetTask(taskID)
 }
 
-func (s *TaskService) GetAllTasks() ([]todoapp.TaskItem, error) {
+func (s *TaskService) GetAllTasks() ([]models.Task, error) {
 	return s.repo.GetAllTasks()
 }
 
