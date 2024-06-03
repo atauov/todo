@@ -22,3 +22,11 @@ func NewRepository(db *gorm.DB) *Repository {
 		Task: NewTaskPostgres(db),
 	}
 }
+
+func CloseRepository(db *gorm.DB) error {
+	sqlDb, err := db.DB()
+	if err != nil {
+		return err
+	}
+	return sqlDb.Close()
+}

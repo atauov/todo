@@ -5,17 +5,28 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"time"
 )
 
 type Config struct {
 	Env        string `yaml:"env" env-default:"development"`
 	HTTPServer `yaml:"http_server"`
+	Database   `yaml:"database"`
 }
 
 type HTTPServer struct {
-	Address     string `yaml:"address" env-default:"0.0.0.0:8080"`
-	Timeout     string `yaml:"timeout" env-default:"5s"`
-	IdleTimeout string `yaml:"idle_timeout" env-default:"60s"`
+	Address     string        `yaml:"address" env-default:"0.0.0.0:8080"`
+	Timeout     time.Duration `yaml:"timeout" env-default:"5s"`
+	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+}
+
+type Database struct {
+	Host     string `yaml:"host" env-default:"localhost"`
+	Port     string `yaml:"port" env-default:"5432"`
+	Username string `yaml:"username" env-default:"postgres"`
+	Password string `yaml:"password" env-default:"postgres"`
+	DBName   string `yaml:"db_name" env-default:"postgres"`
+	SSLMode  string `yaml:"ssl_mode" env-default:"disable"`
 }
 
 func MustLoad() *Config {

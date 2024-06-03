@@ -8,5 +8,7 @@ http_server:
 database:
   host: "localhost"
   username: "postgres"
+  password: "password"
   port: "5432"
   dbname: "todo-db"
+  ssl_mode: "disable"
