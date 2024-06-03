@@ -34,83 +34,94 @@ func (h *Handler) InitRoutes() *echo.Echo {
 	return router
 }
 
-func (h *Handler) createTask(c echo.Context) {
+func (h *Handler) createTask(c echo.Context) error {
 	var input models.Task
 	if err := c.Bind(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
 	}
 
 	id, err := h.services.CreateTask(models.Task{Title: input.Title, Description: input.Description})
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
 	}
 
-	c.JSON(http.StatusOK, idResponse{
+	return c.JSON(http.StatusOK, idResponse{
 		ID:          id,
 		Title:       input.Title,
 		Description: input.Description,
 	})
-
 }
 
-func (h *Handler) getAllTasks(c echo.Context) {
+func (h *Handler) getAllTasks(c echo.Context) error {
 	tasks, err := h.services.GetAllTasks()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
 	}
 
-	c.JSON(http.StatusOK, tasks)
+	return c.JSON(http.StatusOK, tasks)
 }
 
-func (h *Handler) getTask(c echo.Context) {
+func (h *Handler) getTask(c echo.Context) error {
 	idString := c.Param("id")
 	id, err := strconv.Atoi(idString)
 	if id == 0 || err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
 	}
 	task, err := h.services.GetTask(id)
-
-	c.JSON(http.StatusOK, task)
-}
-
-func (h *Handler) updateTask(c echo.Context) {
-	var input models.Task
-	if err := c.Bind(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
 	}
 
-	if err := h.services.UpdateTask(input.ID, input.Description); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-		slog.Error(err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, idResponse{ID: input.ID, Description: input.Description})
+	return c.JSON(http.StatusOK, task)
 }
 
-func (h *Handler) deleteTask(c echo.Context) {
+func (h *Handler) updateTask(c echo.Context) error {
 	idString := c.Param("id")
 	id, err := strconv.Atoi(idString)
 	if id == 0 || err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
+	}
+	input := models.Task{ID: id}
+	if err = c.Bind(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		slog.Error(err.Error())
+		return err
+	}
+
+	if err = h.services.UpdateTask(input.ID, input.Description); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		slog.Error(err.Error())
+		return err
+	}
+
+	return c.JSON(http.StatusOK, idResponse{ID: input.ID, Title: "no change", Description: input.Description})
+}
+
+func (h *Handler) deleteTask(c echo.Context) error {
+	idString := c.Param("id")
+	id, err := strconv.Atoi(idString)
+	if id == 0 || err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		slog.Error(err.Error())
+		return err
 	}
 	if err = h.services.DeleteTask(id); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		slog.Error(err.Error())
-		return
+		return err
 	}
 
-	c.JSON(http.StatusOK, idResponse{ID: id})
+	return c.JSON(http.StatusOK, idResponse{ID: id})
 }
