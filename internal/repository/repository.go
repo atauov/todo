@@ -9,7 +9,7 @@ type Task interface {
 	CreateTask(task models.Task) (int, error)
 	GetTask(taskID int) (models.Task, error)
 	GetAllTasks() ([]models.Task, error)
-	UpdateTask(taskID int, description string) error
+	UpdateTask(taskID int, input models.UpdateTask) error
 	DeleteTask(taskID int) error
 }
 
@@ -30,3 +30,5 @@ func CloseRepository(db *gorm.DB) error {
 	}
 	return sqlDb.Close()
 }
+
+//TODO When id=0 return error. Wrap errors. GORM model

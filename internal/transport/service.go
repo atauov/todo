@@ -33,8 +33,8 @@ func (s *TaskService) GetAllTasks() ([]models.Task, error) {
 	return s.repo.GetAllTasks()
 }
 
-func (s *TaskService) UpdateTask(taskID int, description string) error {
-	return s.repo.UpdateTask(taskID, description)
+func (s *TaskService) UpdateTask(taskID int, input models.UpdateTask) error {
+	return s.repo.UpdateTask(taskID, input)
 }
 
 func (s *TaskService) DeleteTask(taskID int) error {

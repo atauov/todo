@@ -39,13 +39,20 @@ func (r *TaskPostgres) GetAllTasks() ([]models.Task, error) {
 	return tasks, nil
 }
 
-func (r *TaskPostgres) UpdateTask(taskID int, description string) error {
+func (r *TaskPostgres) UpdateTask(taskID int, input models.UpdateTask) error {
 	var task models.Task
 	if err := r.db.First(&task, taskID).Error; err != nil {
 		return err
 	}
 
-	task.Description = description
+	if input.Title != nil {
+		task.Title = *input.Title
+	}
+
+	if input.Description != nil {
+		task.Description = *input.Description
+	}
+
 	if err := r.db.Save(&task).Error; err != nil {
 		return err
 	}

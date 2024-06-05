@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"errors"
 	"github.com/labstack/echo/v4"
 	"log/slog"
 	"net/http"
@@ -70,11 +71,18 @@ func (h *Handler) getAllTasks(c echo.Context) error {
 func (h *Handler) getTask(c echo.Context) error {
 	idString := c.Param("id")
 	id, err := strconv.Atoi(idString)
-	if id == 0 || err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "id should be numeric")
 		slog.Error(err.Error())
 		return err
 	}
+
+	if id <= 0 {
+		newErrorResponse(c, http.StatusBadRequest, "id should be positive")
+		slog.Error("id should be positive")
+		return errors.New("id should be positive")
+	}
+
 	task, err := h.services.GetTask(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -88,40 +96,54 @@ func (h *Handler) getTask(c echo.Context) error {
 func (h *Handler) updateTask(c echo.Context) error {
 	idString := c.Param("id")
 	id, err := strconv.Atoi(idString)
-	if id == 0 || err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "id should be numeric")
 		slog.Error(err.Error())
 		return err
 	}
-	input := models.Task{ID: id}
+
+	if id <= 0 {
+		newErrorResponse(c, http.StatusBadRequest, "id should be positive")
+		slog.Error("id should be positive")
+		return errors.New("id should be positive")
+	}
+
+	input := models.UpdateTask{}
 	if err = c.Bind(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		slog.Error(err.Error())
 		return err
 	}
 
-	if err = h.services.UpdateTask(input.ID, input.Description); err != nil {
+	if err = h.services.UpdateTask(id, input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		slog.Error(err.Error())
 		return err
 	}
 
-	return c.JSON(http.StatusOK, idResponse{ID: input.ID, Title: "no change", Description: input.Description})
+	return c.JSON(http.StatusOK, "OK")
 }
 
 func (h *Handler) deleteTask(c echo.Context) error {
 	idString := c.Param("id")
 	id, err := strconv.Atoi(idString)
-	if id == 0 || err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "id should be numeric")
 		slog.Error(err.Error())
 		return err
 	}
+
+	if id <= 0 {
+		newErrorResponse(c, http.StatusBadRequest, "id should be positive")
+		slog.Error("id should be positive")
+		return errors.New("id should be positive")
+	}
+
 	if err = h.services.DeleteTask(id); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		slog.Error(err.Error())
 		return err
 	}
 
-	return c.JSON(http.StatusOK, idResponse{ID: id})
+	return c.JSON(http.StatusOK, "OK")
 }
